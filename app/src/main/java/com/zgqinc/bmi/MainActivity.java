@@ -1,72 +1,61 @@
 package com.zgqinc.bmi;
 
+import android.app.Activity;
 import android.os.Bundle;
-import android.text.TextUtils;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
-import androidx.appcompat.app.AppCompatActivity;
+import android.widget.*;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends Activity {
+    EditText h, w;
+    TextView r;
 
-    private EditText editTextHeight;
-    private EditText editTextWeight;
-    private TextView textViewResult;
+    public void onCreate(Bundle b) {
+        super.onCreate(b);
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        LinearLayout l = new LinearLayout(this);
+        l.setOrientation(1); // VERTICAL
 
-        editTextHeight = findViewById(R.id.editTextHeight);
-        editTextWeight = findViewById(R.id.editTextWeight);
-        textViewResult = findViewById(R.id.textViewResult);
-        Button buttonCalculate = findViewById(R.id.buttonCalculate);
+        TextView pad = new TextView(this);
+        pad.setText("\n\n");
+        l.addView(pad);
 
-        buttonCalculate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                calculateBMI();
-            }
-        });
+        h = new EditText(this);
+        h.setHint("m");
+        h.setInputType(8194); // numberDecimal
+        l.addView(h);
+
+        w = new EditText(this);
+        w.setHint("kg");
+        w.setInputType(8194);
+        l.addView(w);
+
+        Button btn = new Button(this);
+        btn.setText("calc");
+        l.addView(btn);
+
+        r = new TextView(this);
+        r.setTextSize(25);
+        l.addView(r);
+
+        btn.setOnClickListener(v -> calc());
+
+        setContentView(l);
     }
-//
-//    private EditText findViewById(int editTextHeight) {
-//    }
 
-    private void calculateBMI() {
-        String heightStr = editTextHeight.getText().toString();
-        String weightStr = editTextWeight.getText().toString();
-
-        if (TextUtils.isEmpty(heightStr) || TextUtils.isEmpty(weightStr)) {
-            textViewResult.setText("不是有效值");
+    void calc() {
+        String hs = h.getText().toString(), ws = w.getText().toString();
+        if (hs.isEmpty() || ws.isEmpty()) {
+            r.setText("invalid");
             return;
         }
 
-        float height = Float.parseFloat(heightStr);
-        float weight = Float.parseFloat(weightStr);
-
-        if (height <= 0 || weight <= 0) {
-            textViewResult.setText("数值不能小于0");
+        float hf = Float.parseFloat(hs), wf = Float.parseFloat(ws);
+        if (hf <= 0 || wf <= 0) {
+            r.setText(">0");
             return;
         }
 
-        float bmi = weight / (height * height);
-        String bmiCategory = getBMICategory(bmi);
-
-        textViewResult.setText(String.format("BMI: %.2f\n%s", bmi, bmiCategory));
-    }
-
-    private String getBMICategory(float bmi) {
-        if (bmi < 18.5) {
-            return "过低体重";
-        } else if (bmi >= 18.5 && bmi < 24.9) {
-            return "正常体重";
-        } else if (bmi >= 25 && bmi < 29.9) {
-            return "超重";
-        } else {
-            return "肥胖";
-        }
+        float bmi = wf / (hf * hf);
+        String cat = bmi < 18.5 ? "L" : bmi < 24.9 ? "N" : bmi < 29.9 ? "F" : "O";
+        r.setText(String.format("BMI: %.1f\n%s", bmi, cat));
     }
 }
