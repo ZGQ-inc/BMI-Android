@@ -4,7 +4,7 @@ plugins {
 
 android {
     namespace 'com.zgqinc.bmi'
-    compileSdk 34
+    compileSdk 35
 
     defaultConfig {
         applicationId "com.zgqinc.bmi"
@@ -26,8 +26,10 @@ android {
     }
 
     buildFeatures {
-        viewBinding false
         buildConfig false
+        aidl false
+        renderScript false
+        viewBinding false
     }
 
     packagingOptions {

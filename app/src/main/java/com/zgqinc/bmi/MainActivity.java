@@ -1,26 +1,25 @@
 package com.zgqinc.bmi;
 
-import android.app.Activity;
-import android.os.Bundle;
+import android.app.*;
+import android.os.*;
 import android.widget.*;
 
 public class MainActivity extends Activity {
     EditText h, w;
     TextView r;
 
-    public void onCreate(Bundle b) {
+    protected void onCreate(Bundle b) {
         super.onCreate(b);
-
         LinearLayout l = new LinearLayout(this);
-        l.setOrientation(1); // VERTICAL
+        l.setOrientation(LinearLayout.VERTICAL);
 
         TextView pad = new TextView(this);
-        pad.setText("\n\n");
+        pad.setText("\n");
         l.addView(pad);
 
         h = new EditText(this);
-        h.setHint("m");
-        h.setInputType(8194); // numberDecimal
+        h.setHint("cm");
+        h.setInputType(8194);
         l.addView(h);
 
         w = new EditText(this);
@@ -36,26 +35,18 @@ public class MainActivity extends Activity {
         r.setTextSize(25);
         l.addView(r);
 
-        btn.setOnClickListener(v -> calc());
+        btn.setOnClickListener(v -> {
+            try {
+                float hf = Float.parseFloat(h.getText().toString()) / 100;
+                float wf = Float.parseFloat(w.getText().toString());
+                float bmi = wf / (hf * hf);
+                String cat = bmi < 18.5 ? "L" : bmi < 24.9 ? "N" : bmi < 29.9 ? "F" : "O";
+                r.setText(String.format("BMI: %.1f\n%s", bmi, cat));
+            } catch (Exception e) {
+                r.setText("invalid");
+            }
+        });
 
         setContentView(l);
-    }
-
-    void calc() {
-        String hs = h.getText().toString(), ws = w.getText().toString();
-        if (hs.isEmpty() || ws.isEmpty()) {
-            r.setText("invalid");
-            return;
-        }
-
-        float hf = Float.parseFloat(hs), wf = Float.parseFloat(ws);
-        if (hf <= 0 || wf <= 0) {
-            r.setText(">0");
-            return;
-        }
-
-        float bmi = wf / (hf * hf);
-        String cat = bmi < 18.5 ? "L" : bmi < 24.9 ? "N" : bmi < 29.9 ? "F" : "O";
-        r.setText(String.format("BMI: %.1f\n%s", bmi, cat));
     }
 }
